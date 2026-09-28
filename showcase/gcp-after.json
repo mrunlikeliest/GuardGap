@@ -1,0 +1,97 @@
+{
+  "project": "showcase-project",
+  "collected_at": "2026-09-28T04:02:17.080663+00:00",
+  "project_policy": {
+    "bindings": []
+  },
+  "ancestor_policies": [],
+  "ancestor_iam_complete": true,
+  "cloud_run": [
+    {
+      "requested_name": "support-agent-api",
+      "service": {
+        "metadata": {
+          "name": "support-agent-api",
+          "annotations": {
+            "run.googleapis.com/invoker-iam-disabled": "false"
+          }
+        },
+        "status": {
+          "latestReadyRevisionName": "support-agent-api-00002",
+          "latestCreatedRevisionName": "support-agent-api-00002",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True"
+            }
+          ]
+        }
+      },
+      "revision": {
+        "metadata": {
+          "annotations": {
+            "run.googleapis.com/cloudsql-instances": "showcase-project:us-central1:customer-records"
+          }
+        },
+        "spec": {
+          "serviceAccountName": "support-agent@showcase-project.iam.gserviceaccount.com",
+          "containers": [
+            {
+              "env": [
+                {
+                  "name": "DATABASE_PASSWORD",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "name": "support-db-password"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "status": {
+          "imageDigest": "us-docker.pkg.dev/showcase/agents/support@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      },
+      "iam_policy": {
+        "bindings": []
+      }
+    }
+  ],
+  "sql_instances": [
+    {
+      "requested_name": "customer-records",
+      "instance": {
+        "name": "customer-records",
+        "connectionName": "showcase-project:us-central1:customer-records",
+        "settings": {
+          "ipConfiguration": {
+            "ipv4Enabled": false,
+            "sslMode": "ENCRYPTED_ONLY"
+          }
+        },
+        "ipAddresses": [
+          {
+            "type": "PRIVATE"
+          }
+        ]
+      }
+    }
+  ],
+  "buckets": [
+    {
+      "requested_name": "support-documents",
+      "bucket": {
+        "name": "support-documents",
+        "iamConfiguration": {
+          "publicAccessPrevention": "enforced",
+          "uniformBucketLevelAccess": {
+            "enabled": true
+          }
+        }
+      }
+    }
+  ],
+  "warnings": []
+}

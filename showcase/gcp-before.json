@@ -1,0 +1,111 @@
+{
+  "project": "showcase-project",
+  "collected_at": "2026-09-28T04:02:15.196094+00:00",
+  "project_policy": {
+    "bindings": [
+      {
+        "role": "roles/editor",
+        "members": [
+          "serviceAccount:123456-compute@developer.gserviceaccount.com"
+        ]
+      }
+    ]
+  },
+  "ancestor_policies": [],
+  "ancestor_iam_complete": true,
+  "cloud_run": [
+    {
+      "requested_name": "support-agent-api",
+      "service": {
+        "metadata": {
+          "name": "support-agent-api",
+          "annotations": {
+            "run.googleapis.com/invoker-iam-disabled": "true"
+          }
+        },
+        "status": {
+          "latestReadyRevisionName": "support-agent-api-00001",
+          "latestCreatedRevisionName": "support-agent-api-00001",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True"
+            }
+          ]
+        }
+      },
+      "revision": {
+        "metadata": {
+          "annotations": {
+            "run.googleapis.com/cloudsql-instances": "showcase-project:us-central1:customer-records"
+          }
+        },
+        "spec": {
+          "serviceAccountName": "123456-compute@developer.gserviceaccount.com",
+          "containers": [
+            {
+              "env": [
+                {
+                  "name": "DATABASE_PASSWORD",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "name": "support-db-password"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "status": {
+          "imageDigest": "us-docker.pkg.dev/showcase/agents/support@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "iam_policy": {
+        "bindings": [
+          {
+            "role": "roles/run.invoker",
+            "members": [
+              "allUsers"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "sql_instances": [
+    {
+      "requested_name": "customer-records",
+      "instance": {
+        "name": "customer-records",
+        "connectionName": "showcase-project:us-central1:customer-records",
+        "settings": {
+          "ipConfiguration": {
+            "ipv4Enabled": true,
+            "sslMode": "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
+          }
+        },
+        "ipAddresses": [
+          {
+            "type": "PRIMARY"
+          }
+        ]
+      }
+    }
+  ],
+  "buckets": [
+    {
+      "requested_name": "support-documents",
+      "bucket": {
+        "name": "support-documents",
+        "iamConfiguration": {
+          "publicAccessPrevention": "inherited",
+          "uniformBucketLevelAccess": {
+            "enabled": false
+          }
+        }
+      }
+    }
+  ],
+  "warnings": []
+}

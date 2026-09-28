@@ -1,0 +1,35 @@
+# Start from package root: docker compose --env-file .env -f deploy/compose.postgres.yaml up --build -d
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: guardgap
+      POSTGRES_USER: guardgap
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U guardgap"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  guardgap:
+    build: ..
+    environment:
+      DATABASE_URL: postgresql+psycopg://guardgap:${POSTGRES_PASSWORD}@db:5432/guardgap
+      GUARDGAP_ADMIN_PASSWORD_HASH: ${GUARDGAP_ADMIN_PASSWORD_HASH:?Run bootstrap first}
+      GUARDGAP_SECURE_COOKIE: ${GUARDGAP_SECURE_COOKIE:-true}
+      GUARDGAP_DEMO: "false"
+      PORT: "8000"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  postgres-data:

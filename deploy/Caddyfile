@@ -1,0 +1,5 @@
+# Run Caddy on the same VM as the port-bound Docker service.
+# Replace this hostname with a DNS name pointing to the VM.
+guardgap.example.com {
+    reverse_proxy 127.0.0.1:8000
+}

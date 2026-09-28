@@ -1,0 +1,301 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "c2c2c5c6-4bb2-4f66-8013-8fffa9f89ba2",
+  "application_id": "guardgap-showcase",
+  "environment": "staging",
+  "repository": "acme/support-agent",
+  "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "collected_at": "2026-09-28T04:02:17.475130Z",
+  "collector_version": "0.1.0",
+  "expected_image_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "deployment_status": "succeeded",
+  "demo": false,
+  "resources": [
+    {
+      "id": "source:12e5aba755f711c0",
+      "name": "support-agent",
+      "kind": "python_component",
+      "layer": "source",
+      "facts": {
+        "invoker_iam_disabled": null,
+        "iam_bindings": [],
+        "iam_complete": false,
+        "service_account": null,
+        "image_digest": null,
+        "ready": null,
+        "revision": null,
+        "sql_connections": [],
+        "secret_references": [],
+        "public_ip_enabled": null,
+        "public_ip_present": null,
+        "ssl_mode": null,
+        "connection_name": null,
+        "public_access_prevention": null,
+        "uniform_bucket_access": null,
+        "imports": [
+          "contextlib",
+          "contextlib.asynccontextmanager",
+          "fastapi",
+          "fastapi.Depends",
+          "fastapi.FastAPI",
+          "fastapi.HTTPException",
+          "fastapi.Header",
+          "google",
+          "google.genai",
+          "hmac",
+          "httpx",
+          "json",
+          "os",
+          "pydantic",
+          "pydantic.BaseModel",
+          "pydantic.Field",
+          "sqlalchemy",
+          "sqlalchemy.create_engine",
+          "sqlalchemy.text"
+        ],
+        "routes": [
+          "GET /health (app.py:39)",
+          "GET /records/{record_id} (app.py:42)",
+          "POST /ask (app.py:57)",
+          "POST /records/{record_id} (app.py:50)"
+        ],
+        "ai_signals": [
+          "google.genai"
+        ],
+        "env_references": [
+          "ENFORCE_TENANT_CHECK",
+          "GOOGLE_CLOUD_LOCATION",
+          "SUPPORT_DATABASE_URL",
+          "SUPPORT_IDENTITY_TOKEN",
+          "SUPPORT_LOCAL_MODE",
+          "SUPPORT_TEST_TRUST_ENV",
+          "TENANT_B_RECORD_ID"
+        ],
+        "test_name": null,
+        "test_passed": null,
+        "tested_image_digest": null
+      },
+      "evidence": {
+        "source": "python_ast",
+        "locator": "acme/support-agent: 2 Python files",
+        "sha256": "1c1cb54f27d51b7a6f7494ea6dc3d114e615cd4a661e221420a1b41643e18d1e",
+        "collected_at": "2026-09-28T04:02:17.475130Z"
+      }
+    },
+    {
+      "id": "gcp:showcase-project:iam",
+      "name": "showcase-project IAM",
+      "kind": "project_iam",
+      "layer": "deployed",
+      "facts": {
+        "invoker_iam_disabled": null,
+        "iam_bindings": [],
+        "iam_complete": true,
+        "service_account": null,
+        "image_digest": null,
+        "ready": null,
+        "revision": null,
+        "sql_connections": [],
+        "secret_references": [],
+        "public_ip_enabled": null,
+        "public_ip_present": null,
+        "ssl_mode": null,
+        "connection_name": null,
+        "public_access_prevention": null,
+        "uniform_bucket_access": null,
+        "imports": [],
+        "routes": [],
+        "ai_signals": [],
+        "env_references": [],
+        "test_name": null,
+        "test_passed": null,
+        "tested_image_digest": null
+      },
+      "evidence": {
+        "source": "gcp_api",
+        "locator": "projects/showcase-project:getIamPolicy + ancestors",
+        "sha256": "d42ce2d989737cff216e569ed5abe2f3a68cef684ff26b9118d7d41f7d751836",
+        "collected_at": "2026-09-28T04:02:17.080663Z"
+      }
+    },
+    {
+      "id": "gcp:showcase-project:run:support-agent-api",
+      "name": "support-agent-api",
+      "kind": "cloud_run",
+      "layer": "deployed",
+      "facts": {
+        "invoker_iam_disabled": false,
+        "iam_bindings": [],
+        "iam_complete": true,
+        "service_account": "support-agent@showcase-project.iam.gserviceaccount.com",
+        "image_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "ready": true,
+        "revision": "support-agent-api-00002",
+        "sql_connections": [
+          "showcase-project:us-central1:customer-records"
+        ],
+        "secret_references": [
+          "support-db-password"
+        ],
+        "public_ip_enabled": null,
+        "public_ip_present": null,
+        "ssl_mode": null,
+        "connection_name": null,
+        "public_access_prevention": null,
+        "uniform_bucket_access": null,
+        "imports": [],
+        "routes": [],
+        "ai_signals": [],
+        "env_references": [],
+        "test_name": null,
+        "test_passed": null,
+        "tested_image_digest": null
+      },
+      "evidence": {
+        "source": "gcp_api",
+        "locator": "run/support-agent-api:service,readyRevision,iamPolicy",
+        "sha256": "89c9f8d172d1d930a7d84b087581663e093c482dfba1b7ec4e626277a3bc8053",
+        "collected_at": "2026-09-28T04:02:17.080663Z"
+      }
+    },
+    {
+      "id": "gcp:showcase-project:sql:customer-records",
+      "name": "customer-records",
+      "kind": "cloud_sql",
+      "layer": "deployed",
+      "facts": {
+        "invoker_iam_disabled": null,
+        "iam_bindings": [],
+        "iam_complete": false,
+        "service_account": null,
+        "image_digest": null,
+        "ready": null,
+        "revision": null,
+        "sql_connections": [],
+        "secret_references": [],
+        "public_ip_enabled": false,
+        "public_ip_present": false,
+        "ssl_mode": "ENCRYPTED_ONLY",
+        "connection_name": "showcase-project:us-central1:customer-records",
+        "public_access_prevention": null,
+        "uniform_bucket_access": null,
+        "imports": [],
+        "routes": [],
+        "ai_signals": [],
+        "env_references": [],
+        "test_name": null,
+        "test_passed": null,
+        "tested_image_digest": null
+      },
+      "evidence": {
+        "source": "gcp_api",
+        "locator": "sql/instances/customer-records",
+        "sha256": "89ab7ed44907d16b34f7473efb64c0d373eff25f538893a08758e0db445d60b5",
+        "collected_at": "2026-09-28T04:02:17.080663Z"
+      }
+    },
+    {
+      "id": "gcp:showcase-project:bucket:support-documents",
+      "name": "support-documents",
+      "kind": "gcs_bucket",
+      "layer": "deployed",
+      "facts": {
+        "invoker_iam_disabled": null,
+        "iam_bindings": [],
+        "iam_complete": false,
+        "service_account": null,
+        "image_digest": null,
+        "ready": null,
+        "revision": null,
+        "sql_connections": [],
+        "secret_references": [],
+        "public_ip_enabled": null,
+        "public_ip_present": null,
+        "ssl_mode": null,
+        "connection_name": null,
+        "public_access_prevention": "enforced",
+        "uniform_bucket_access": true,
+        "imports": [],
+        "routes": [],
+        "ai_signals": [],
+        "env_references": [],
+        "test_name": null,
+        "test_passed": null,
+        "tested_image_digest": null
+      },
+      "evidence": {
+        "source": "gcp_api",
+        "locator": "storage/buckets/support-documents",
+        "sha256": "9c8f176374526606edb917684184151118370006a83500bb28eb41ca785a77e6",
+        "collected_at": "2026-09-28T04:02:17.080663Z"
+      }
+    },
+    {
+      "id": "test:negative-authorization",
+      "name": "test_cross_customer_denied",
+      "kind": "authorization_test",
+      "layer": "test",
+      "facts": {
+        "invoker_iam_disabled": null,
+        "iam_bindings": [],
+        "iam_complete": false,
+        "service_account": null,
+        "image_digest": null,
+        "ready": null,
+        "revision": null,
+        "sql_connections": [],
+        "secret_references": [],
+        "public_ip_enabled": null,
+        "public_ip_present": null,
+        "ssl_mode": null,
+        "connection_name": null,
+        "public_access_prevention": null,
+        "uniform_bucket_access": null,
+        "imports": [],
+        "routes": [],
+        "ai_signals": [],
+        "env_references": [],
+        "test_name": "test_cross_customer_denied",
+        "test_passed": true,
+        "tested_image_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "evidence": {
+        "source": "junit",
+        "locator": "authorization-after.xml",
+        "sha256": "26ed79a9f4a7443f912cc2ba57349ea81259c0eff42c80a5ebf92e5a6b01337d",
+        "collected_at": "2026-09-28T04:02:17.081297Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gcp:showcase-project:run:support-agent-api",
+      "target": "gcp:showcase-project:iam",
+      "relationship": "runtime identity policies",
+      "confidence": "evidenced",
+      "reason": "support-agent@showcase-project.iam.gserviceaccount.com"
+    },
+    {
+      "source": "gcp:showcase-project:run:support-agent-api",
+      "target": "gcp:showcase-project:sql:customer-records",
+      "relationship": "Cloud SQL attachment",
+      "confidence": "evidenced",
+      "reason": "Exact connectionName matches the ready revision's Cloud SQL annotation; traffic is not observed."
+    },
+    {
+      "source": "test:negative-authorization",
+      "target": "gcp:showcase-project:run:support-agent-api",
+      "relationship": "test image match",
+      "confidence": "evidenced",
+      "reason": "JUnit supplied with the same image digest; the CI producer is trusted."
+    },
+    {
+      "source": "source:12e5aba755f711c0",
+      "target": "gcp:showcase-project:run:support-agent-api",
+      "relationship": "build digest match",
+      "confidence": "evidenced",
+      "reason": "Runner supplies this checkout's build digest; deployed revision matches. Independent provenance verification is not performed."
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,17 @@
+services:
+  guardgap:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////data/guardgap.db
+      PORT: "8000"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - guardgap-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  guardgap-data:

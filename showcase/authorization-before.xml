@@ -1,0 +1,1 @@
+<testsuite name="authorization"><testcase classname="security" name="test_cross_customer_denied"><failure message="cross-customer update was accepted"/></testcase></testsuite>

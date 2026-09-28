@@ -1,0 +1,85 @@
+{
+  "application_id": "guardgap-showcase",
+  "environment": "staging",
+  "repository": "acme/support-agent",
+  "before": {
+    "report_id": "b6d4cbf6-a0c0-4c5c-a84d-8614464d017f",
+    "snapshot_id": "f543bd08-9f47-4f55-9880-0811d81e7470",
+    "counts": {
+      "met": 1,
+      "gap": 7,
+      "unknown": 1
+    }
+  },
+  "after": {
+    "report_id": "db760832-84e3-4a42-b174-9be84774a9b0",
+    "snapshot_id": "c2c2c5c6-4bb2-4f66-8013-8fffa9f89ba2",
+    "counts": {
+      "met": 9,
+      "gap": 0,
+      "unknown": 0
+    },
+    "changes": [
+      {
+        "control": "IAM-001",
+        "resource": "showcase-project IAM",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "RUN-001",
+        "resource": "support-agent-api",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "RUN-002",
+        "resource": "support-agent-api",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "SQL-001",
+        "resource": "customer-records",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "SQL-002",
+        "resource": "customer-records",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "GCS-001",
+        "resource": "support-documents",
+        "before": "unknown",
+        "after": "met"
+      },
+      {
+        "control": "GCS-002",
+        "resource": "support-documents",
+        "before": "gap",
+        "after": "met"
+      },
+      {
+        "control": "TEST-001",
+        "resource": "test_cross_customer_denied",
+        "before": "gap",
+        "after": "met"
+      }
+    ],
+    "resources": 6,
+    "edges": 4
+  },
+  "artifacts": [
+    "assessment-after.md",
+    "assessment-before.md",
+    "authorization-after.xml",
+    "authorization-before.xml",
+    "evidence-after.json",
+    "evidence-before.json",
+    "gcp-after.json",
+    "gcp-before.json"
+  ]
+}

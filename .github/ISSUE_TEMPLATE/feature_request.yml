@@ -1,0 +1,33 @@
+name: Feature or control proposal
+description: Propose a capability, evidence adapter, or deterministic control
+title: "proposal: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What operator decision or evidence gap should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required evidence
+      description: Which exact observations are needed, and how can they be collected read-only?
+    validations:
+      required: true
+  - type: textarea
+    id: semantics
+    attributes:
+      label: Result semantics
+      description: Define met, gap, and unknown behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Boundaries and risks
+      description: What would remain unproven, and what sensitive metadata might be collected?
+    validations:
+      required: true

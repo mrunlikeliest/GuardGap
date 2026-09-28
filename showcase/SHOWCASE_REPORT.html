@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<base href="./">
+<title>GuardGap end-to-end showcase</title>
+<style>
+  @page { size: A4; margin: 14mm 13mm 16mm; }
+  :root { --ink:#17352f; --green:#147056; --line:#dce5df; --paper:#f7faf7; }
+  * { box-sizing:border-box; }
+  body { margin:0 auto; color:var(--ink); font:14px/1.55 Arial,sans-serif; max-width:1050px; }
+  h1 { color:var(--green); font-size:34px; margin:0 0 12px; }
+  h2 { color:var(--green); margin:32px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  h3 { margin-top:24px; }
+  p, li { color:#36564e; }
+  a { color:var(--green); }
+  table { width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:12px; }
+  th, td { border:1px solid var(--line); padding:8px 9px; text-align:left; vertical-align:top; }
+  th { background:#eaf3ec; }
+  code { background:#eef3ef; padding:2px 4px; border-radius:3px; }
+  pre { background:#15372f; color:#fff; padding:15px; border-radius:7px; white-space:pre-wrap; }
+  pre code { background:none; padding:0; }
+  img { display:block; width:100%; height:auto; margin:16px auto 28px; border:1px solid var(--line); border-radius:6px; page-break-inside:avoid; }
+  blockquote { border-left:4px solid var(--green); padding-left:14px; color:#527067; }
+</style></head><body><h1>GuardGap end-to-end showcase</h1>
+<p><strong>Run date:</strong> September 28, 2026<br><strong>Application:</strong> Support Agent Showcase (<code>guardgap-showcase</code>)<br><strong>Environment:</strong> <code>staging</code><br><strong>Repository identity:</strong> <code>acme/support-agent</code></p>
+<h2>Executive result</h2>
+<p>GuardGap successfully processed two complete synthetic deployment snapshots through the same collector, scoped-token API, database, assessment engine, and dashboard used for a real integration.</p>
+<table>
+<thead>
+<tr>
+<th>Snapshot</th>
+<th align="right">Met</th>
+<th align="right">Gaps</th>
+<th align="right">Unknown</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Before remediation</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td>Broad IAM, public invocation, public and unencrypted SQL, object ACLs, and a failed cross-customer authorization test were detected.</td>
+</tr>
+<tr>
+<td>After remediation</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td>All nine supported controls were backed by current matching evidence.</td>
+</tr>
+</tbody></table>
+<p>The second assessment recorded eight transitions: seven <code>gap → met</code> changes and one <code>unknown → met</code> change. The immutable build check remained met in both snapshots.</p>
+<p><img src="01-overview-after.png" alt="Remediated overview showing nine controls met"></p>
+<h2>What was exercised</h2>
+<p>The showcase uses the runnable support-agent fixture in <code>examples/support-agent</code> and the packaged GitHub Actions collector hook in <code>examples/github/collect.yml</code>. No real cloud account was changed. The GCP API responses are synthetic, while source scanning, JUnit parsing, token authentication, HTTP ingestion, persistence, comparison, rendering, and audit logging are executed by the live GuardGap service.</p>
+<ol>
+<li>A <code>guardgap-showcase</code> workspace was created through the authenticated application API.</li>
+<li>An environment-scoped <code>staging</code> collector token was created through the token API.</li>
+<li>The collector scanned the real Python fixture without executing its source.</li>
+<li>It normalized synthetic Cloud Run, Cloud SQL, Cloud Storage, and project IAM observations.</li>
+<li>It parsed the named <code>test_cross_customer_denied</code> JUnit result and tied it to the same image digest as the ready Cloud Run revision.</li>
+<li>It submitted the bundle to <code>POST /api/ingest</code> with the scoped bearer token.</li>
+<li>GuardGap persisted the immutable snapshot, ran nine deterministic checks, and created the first report.</li>
+<li>A second build/deployment snapshot was submitted after the dummy remediations. GuardGap compared it with the first compatible snapshot and recorded the status transitions.</li>
+</ol>
+<pre><code class="language-text">GitHub Actions / trusted runner
+  ├── Python AST inventory ───────────────┐
+  ├── GCP read-only observations ─────────┤
+  ├── build + deployed image digest ──────┼──&gt; normalized evidence bundle
+  └── named JUnit authorization result ───┘          │
+                                                      │ scoped token
+                                                      v
+GuardGap ingest API -&gt; immutable snapshot -&gt; control engine -&gt; report history -&gt; dashboard
+</code></pre>
+<h2>Observed architecture</h2>
+<p>The final bundle contains six resources and four evidence-backed connections:</p>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>To</th>
+<th>Relationship</th>
+<th>Evidence basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>support-agent</code> source</td>
+<td><code>support-agent-api</code></td>
+<td>Build digest match</td>
+<td>Collector-supplied build digest matches the ready revision digest.</td>
+</tr>
+<tr>
+<td><code>test_cross_customer_denied</code></td>
+<td><code>support-agent-api</code></td>
+<td>Test image match</td>
+<td>JUnit test digest matches the ready deployed image.</td>
+</tr>
+<tr>
+<td><code>support-agent-api</code></td>
+<td><code>customer-records</code></td>
+<td>Cloud SQL attachment</td>
+<td>Exact Cloud SQL connection name matches the ready revision annotation.</td>
+</tr>
+<tr>
+<td><code>support-agent-api</code></td>
+<td><code>showcase-project IAM</code></td>
+<td>Runtime identity policies</td>
+<td>Ready revision service account is correlated with collected IAM policies.</td>
+</tr>
+</tbody></table>
+<p>The Storage bucket remains visible in inventory without an invented application data-flow edge. This is intentional: GuardGap only draws relationships supported by collected configuration.</p>
+<p><img src="02-architecture-after.png" alt="Architecture and connection evidence"></p>
+<h2>Before remediation</h2>
+<p>The first deployment deliberately contained:</p>
+<ul>
+<li>A default runtime identity with a direct Editor grant.</li>
+<li>Disabled Cloud Run Invoker IAM and a public invoker binding.</li>
+<li>A matching immutable deployed image, which correctly remained met.</li>
+<li>A public Cloud SQL address that allowed unencrypted connections.</li>
+<li>Inherited rather than explicit Storage public-access prevention.</li>
+<li>Object ACL support through disabled uniform bucket-level access.</li>
+<li>A failed cross-customer negative authorization test.</li>
+</ul>
+<p><img src="03-overview-before.png" alt="Initial assessment with seven gaps and one unknown"></p>
+<p>Each finding exposes the normalized observation, evidence source, locator, timestamp, fingerprint, and concrete implementation guidance.</p>
+<p><img src="04-finding-evidence.png" alt="Evidence and remediation detail for IAM-001"></p>
+<h2>After remediation</h2>
+<p>The second snapshot represented these deployed changes:</p>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Before</th>
+<th>After</th>
+<th>Evidence change</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IAM-001</td>
+<td>Gap</td>
+<td>Met</td>
+<td>Runtime account no longer has direct Owner or Editor bindings.</td>
+</tr>
+<tr>
+<td>RUN-001</td>
+<td>Gap</td>
+<td>Met</td>
+<td>Invoker IAM is enabled and no public invoker binding is present.</td>
+</tr>
+<tr>
+<td>RUN-002</td>
+<td>Gap</td>
+<td>Met</td>
+<td>Ready revision uses a dedicated service account.</td>
+</tr>
+<tr>
+<td>RUN-003</td>
+<td>Met</td>
+<td>Met</td>
+<td>Ready revision still matches the collector-supplied immutable build digest.</td>
+</tr>
+<tr>
+<td>SQL-001</td>
+<td>Gap</td>
+<td>Met</td>
+<td>Public IPv4 is disabled and no public address is present.</td>
+</tr>
+<tr>
+<td>SQL-002</td>
+<td>Gap</td>
+<td>Met</td>
+<td>SSL mode is <code>ENCRYPTED_ONLY</code>.</td>
+</tr>
+<tr>
+<td>GCS-001</td>
+<td>Unknown</td>
+<td>Met</td>
+<td>Public access prevention is explicitly <code>enforced</code>.</td>
+</tr>
+<tr>
+<td>GCS-002</td>
+<td>Gap</td>
+<td>Met</td>
+<td>Uniform bucket-level access is enabled.</td>
+</tr>
+<tr>
+<td>TEST-001</td>
+<td>Gap</td>
+<td>Met</td>
+<td>The named cross-customer denial test passes against the deployed image digest.</td>
+</tr>
+</tbody></table>
+<p>The dashboard displays both reports in history and shows each transition in the “What changed” panel.</p>
+<h2>Collector hook and token lifecycle</h2>
+<p>The Connections view produces the command for the selected application and documents the GitHub Actions + GCP integration boundary. Collector credentials are scoped to one application and environment. The unused setup token from this run was revoked; one active showcase token remains, demonstrating that revocation is retained independently of assessment history.</p>
+<p><img src="05-connections-hook.png" alt="Collector command, active token, and revoked token"></p>
+<p>The production-ready hook template is <a href="../examples/github/collect.yml">examples/github/collect.yml</a>. It authenticates to GCP through Workload Identity Federation, runs the collector after deployment, generates a Markdown assessment, and uploads the normalized evidence as a workflow artifact.</p>
+<h2>Audit evidence</h2>
+<p>The live audit trail records application creation, token creation and revocation, and both evidence-ingestion events. Snapshot and token identifiers are recorded without exposing the bearer-token value.</p>
+<p><img src="06-activity-evidence.png" alt="Audit trail for the showcase run"></p>
+<h2>Evidence package</h2>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="evidence-before.json">evidence-before.json</a></td>
+<td>Normalized collector bundle submitted for the vulnerable deployment.</td>
+</tr>
+<tr>
+<td><a href="evidence-after.json">evidence-after.json</a></td>
+<td>Normalized collector bundle submitted for the remediated deployment.</td>
+</tr>
+<tr>
+<td><a href="gcp-before.json">gcp-before.json</a> / <a href="gcp-after.json">gcp-after.json</a></td>
+<td>Synthetic read-only GCP API observations consumed by the real normalizer.</td>
+</tr>
+<tr>
+<td><a href="authorization-before.xml">authorization-before.xml</a> / <a href="authorization-after.xml">authorization-after.xml</a></td>
+<td>Failed and passing named JUnit authorization evidence.</td>
+</tr>
+<tr>
+<td><a href="assessment-before.md">assessment-before.md</a> / <a href="assessment-after.md">assessment-after.md</a></td>
+<td>Standalone CLI reports generated from each evidence bundle.</td>
+</tr>
+<tr>
+<td><a href="showcase-summary.json">showcase-summary.json</a></td>
+<td>Report IDs, snapshot IDs, counts, transitions, and architecture totals.</td>
+</tr>
+<tr>
+<td><a href="SHA256SUMS.txt">SHA256SUMS.txt</a></td>
+<td>SHA-256 fingerprints for the source evidence artifacts.</td>
+</tr>
+</tbody></table>
+<h2>Validation</h2>
+<ul>
+<li>Production image build: passed on Python 3.12.</li>
+<li>Container health check: healthy; <code>/healthz</code> returned GuardGap <code>0.1.0</code>.</li>
+<li>Automated suite: <strong>16 passed</strong>.</li>
+<li>CLI-to-live-service test: passed, including application/token creation, two collector uploads, report history, and <code>7 gaps / 1 met / 1 unknown → 9 met</code> transition.</li>
+<li>Live showcase ingestion: passed with two persisted snapshots, two reports, six resources, four architecture connections, and eight recorded status transitions.</li>
+<li>Authenticated screenshot capture: passed against the running service at <code>http://localhost:8000</code>.</li>
+</ul>
+<h2>Scope statement</h2>
+<p>This package demonstrates GuardGap’s software flow and supported control logic. The GCP observations are intentionally synthetic and do not prove that a real GCP project has these settings. A production showcase should run the same packaged collector with a read-only GCP identity after an actual deployment. A <code>MET</code> result confirms only the named predicate within collected evidence; it is not a complete security certification.</p>
+</body></html>
