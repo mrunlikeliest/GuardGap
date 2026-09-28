@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-147056.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-147056.svg)](pyproject.toml)
 [![Status: v0.1](https://img.shields.io/badge/status-v0.1-f0b429.svg)](CHANGELOG.md)
+[![CI](https://github.com/mrunlikeliest/GuardGap/actions/workflows/ci.yml/badge.svg)](https://github.com/mrunlikeliest/GuardGap/actions/workflows/ci.yml)
 
 ![GuardGap dashboard showing nine controls backed by current evidence](showcase/01-overview-after.png)
 
